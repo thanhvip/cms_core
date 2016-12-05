@@ -8,5 +8,5 @@ var app = angular.module('Mean', [
  'appServices',
  'baseCtrl',
  'postCtrl',
- 'postService'
+ //'postService'
 ]);
