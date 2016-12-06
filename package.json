@@ -15,7 +15,9 @@
     "passport": "~*",
     "passport-facebook": "*",
     "passport-google-oauth": "*",
-    "passport-local": "*"
+    "passport-local": "*",
+    "mongoose": "*",
+    "mongodb": "~2.2.12"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
