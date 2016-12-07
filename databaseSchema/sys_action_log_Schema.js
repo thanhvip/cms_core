@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var sysActionLogSchema = new mongoose.Schema({
+var sys_action_log_Schema = new mongoose.Schema({
     username: {type: String, required: true, trim: true},
     actionDate:{type:Date,default:""},
     actionName:{type:String},
@@ -12,4 +12,4 @@ var sysActionLogSchema = new mongoose.Schema({
     rawUrl: {type:String},
     method:{type:String}
 });
-module.exports = sysActionLogSchema;
+module.exports = sys_action_log_Schema;

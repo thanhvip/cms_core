@@ -38,33 +38,153 @@ if (process.env.DOCKER_MONGODB_NAME && process.env.DOCKER_MONGODB_USERNAME) {
     mongoConnectString += (conf.HOST + "/" + conf.DATABASE_NAME);
 }
 //---------add other mongoDB configuration blocks here----------------
-
 //--------------------------------------------------------------------
 mongoose.connect(mongoConnectString);
+var manager = require('../managers/managerCommon');
+//--------------------------- gọi schema
+var accessLevelSchema = require('../databaseSchema/access_level_Schema');
+var databaseVersionSchema = require('../databaseSchema/database_version_Schema');
+var deparmentSchema = require('../databaseSchema/deparment_Schema');
+var deparmentPositionSchema = require('../databaseSchema/deparment_position_Schema');
+var newsCategorySchema = require('../databaseSchema/news_category_Schema');
+var newsSchema = require('../databaseSchema/news_Schema');
+var positionSchema = require('../databaseSchema/position_Schema');
+var productGroupSchema = require('../databaseSchema/product_group_Schema');
+var productSchema = require('../databaseSchema/product_Schema');
+var sysActionLogSchema = require('../databaseSchema/sys_action_log_Schema');
+var sysFunctionRoleSchema = require('../databaseSchema/sys_function_role_Schema');
+var sysFunctionSchema = require('../databaseSchema/sys_function_Schema');
+var sysMenuRoleSchema = require('../databaseSchema/sys_menu_role_Schema');
+var sysMenuSchema = require('../databaseSchema/sys_menu_Schema');
+var sysRoleSchema = require('../databaseSchema/sys_role_Schema');
+var sysUserSchema = require('../databaseSchema/sys_user_Schema');
+var userDeparmentPositionSchema = require('../databaseSchema/user_deparment_position_Schema');
+var languageSchema = require('../databaseSchema/language_Schema');
+var templateSchema=require('../databaseSchema/template_Schema');
+var ruleDeclarationSchema=require('../databaseSchema/rule_declaration_Schema');
+var mailServerSchema=require('../databaseSchema/mail_server_Schema');
+var sectionSchema=require('../databaseSchema/section_Schema');
+var categorySchema=require('../databaseSchema/category_Schema');
+var locationSchema=require('../databaseSchema/location_Schema');
+var templateEngineSchema=require('../databaseSchema/template_engine_Schema');
+//--------------- convert schema to object
+var access_level = mongoose.model('access_level', accessLevelSchema);
+var database_version = mongoose.model('database_version', databaseVersionSchema);
+var deparment=mongoose.model('deparment', deparmentSchema);
+var deparment_position=mongoose.model('deparment_position', deparmentPositionSchema);
+var news_category=mongoose.model('news_category', newsCategorySchema);
+var news=mongoose.model('news', newsSchema);
+var position=mongoose.model('position', positionSchema);
+var product_group=mongoose.model('product_group', productGroupSchema);
+var product=mongoose.model('product', productSchema);
+var sys_action_log=mongoose.model('sys_action_log', sysActionLogSchema);
+var sys_function_role=mongoose.model('deparment', sysFunctionRoleSchema);
+var sys_function=mongoose.model('sys_function', sysFunctionSchema);
+var sys_menu_role=mongoose.model('sys_menu_role', sysMenuRoleSchema);
+var sys_menu=mongoose.model('sys_menu', sysMenuSchema);
+var sys_role=mongoose.model('sys_role', sysRoleSchema);
+var sys_user=mongoose.model('sys_user', sysUserSchema);
+var user_department_position=mongoose.model('user_department_position', userDeparmentPositionSchema);
+var language=mongoose.model('sys_user', languageSchema);
+var template=mongoose.model('template', templateSchema);
+var rule_declaration=mongoose.model('rule_declaration', ruleDeclarationSchema);
+var mail_server=mongoose.model('mail_server', mailServerSchema);
+var section=mongoose.model('section', sectionSchema);
+var category=mongoose.model('category', categorySchema);
+var location=mongoose.model('location', locationSchema);
+var template_engine=mongoose.model('template_engine', templateEngineSchema);
 
-var manager = require('../managers/manager');
-
-var accessLevelSchema = require('../databaseSchema/accessLevelSchema');
-var userSchema = require('../databaseSchema/userSchema');
-
-var accesslevel = mongoose.model('accesslevel', accessLevelSchema);
-var sys_user = mongoose.model('sys_user', userSchema);
-
+//--------------- Khỏi tạo phương thức get list cho đối tượng
 exports.getAccessLevel = function () {
-    return accesslevel;
+    return access_level;
 };
-exports.getUser = function () {
+exports.getDatabaseVersion = function () {
+    return database_version;
+};
+exports.getDeparment = function () {
+    return deparment;
+};
+exports.getDeparmentPosition = function () {
+    return deparment_position;
+};
+exports.getNewsCategory = function () {
+    return news_category;
+};
+exports.getNews = function () {
+    return news;
+};
+exports.getPosition = function () {
+    return position;
+};
+exports.getProductGroup = function () {
+    return product_group;
+};
+exports.getProduct = function () {
+    return product;
+};
+exports.getSysActionLog = function () {
+    return sys_action_log;
+};
+exports.getSysFunctionRole = function () {
+    return sys_function_role;
+};
+exports.getSysFunction = function () {
+    return sys_function;
+};
+exports.getSysMenuRole = function () {
+    return sys_menu_role;
+};
+exports.getSysRole = function () {
+    return sys_role;
+};
+exports.getSysMenu = function () {
+    return sys_menu;
+};
+getSysUser = function () {
     return sys_user;
 };
+exports.getUserDeparmentPosition = function () {
+    return user_department_position;
+};
+exports.getLanguage = function () {
+    return language;
+};
+exports.getTemplate = function () {
+    return template;
+};
+exports.getRuleDeclaration=function()
+{
+    return rule_declaration;
+}
+exports.getMailServer=function()
+{
+    return mail_server;
+}
+exports.getSection=function()
+{
+    return section;
+}
+exports.getCategory=function()
+{
+    return category;
+}
+exports.getLocation=function()
+{
+    return location;
+}
+exports.getTemplateEngine=function()
+{
+    return template_engine;
+}
 
 //initialize the mongoDB database with needed records required for startup
 exports.initializeMongoDb = function () {
     //check if databaseVersion record is set
     initializeDatabaseVersion();
 };
-
+// Kiểm tra version của database
 initializeDatabaseVersion = function () {
-    DatabaseVersion.find({}, function (err, results) {
+    database_version.find({}, function (err, results) {
         if (err) {
             console.log("databaseVersion Error:" + err);
         } else {
@@ -73,7 +193,7 @@ initializeDatabaseVersion = function () {
                 var versionRecord = {
                     version: "1.0.0"
                 };
-                var dbVer = new DatabaseVersion(versionRecord);
+                var dbVer = new database_version(versionRecord);
                 dbVer.save(function (err) {
                     if (err) {
                         console.log("databaseVersion save error: " + err);
@@ -89,10 +209,10 @@ initializeDatabaseVersion = function () {
         }
     });
 };
-
+//Kiểm tra quyền trong database
 initializeRoles = function () {
     //check if roles are in database
-    Role.find({}, function (err, results) {
+    sys_role.find({}, function (err, results) {
         if (err) {
             console.log("Role Error:" + err);
         } else {
@@ -110,22 +230,22 @@ initializeRoles = function () {
                 var userRecord = {
                     name: manager.ROLE_USER
                 };
-                var role = new Role(superAdminRecord);
+                var role = new sys_role(superAdminRecord);
                 role.save(function (err) {
                     if (err) {
                         console.log("super admin role save error: " + err);
                     } else {
-                        role = new Role(adminRecord);
+                        role = new sys_role(adminRecord);
                         role.save(function (err) {
                             if (err) {
                                 console.log("admin role save error: " + err);
                             } else {
-                                role = new Role(authorRecord);
+                                role = new sys_role(authorRecord);
                                 role.save(function (err) {
                                     if (err) {
                                         console.log("author role save error: " + err);
                                     } else {
-                                        role = new Role(userRecord);
+                                        role = new sys_role(userRecord);
                                         role.save(function (err) {
                                             if (err) {
                                                 console.log("user role save error: " + err);
@@ -147,32 +267,47 @@ initializeRoles = function () {
         }
     });
 };
-
+// Kiểm tra người dùng mặc định
 initializeDefaultUsers = function () {
     //check if default users are in database
-    Role.findOne({name: manager.ROLE_SUPER_ADMIN}, function (err, roleResults) {
+    sys_role.findOne({name: manager.ROLE_SUPER_ADMIN}, function (err, roleResults) {
         if (err) {
             console.log("lookup super admin role error:" + err);
         } else {
             console.log("role:" + JSON.stringify(roleResults));
             var superAdmimRole = roleResults.toObject();
-            User.find({}, function (err, results) {
+            sys_user.find({}, function (err, results) {
                 if (err) {
                     console.log("user Error:" + err);
                 } else {
                     console.log("user:" + JSON.stringify(results));
                     if (results.length === 0) {
-                        var hashedPw = manager.hashPasswordSync("admin", "admin");
+                        var hashedPassword = manager.hashPasswordSync("admin", "admin");
                         var adminUserRecord = {
                             username: "admin",
-                            password: hashedPw,
-                            enabled: true,
-                            emailAddress: "admin@ulboracms.com",
-                            firstName: "super",
-                            lastName: "administrator",
-                            role: superAdmimRole
+                            password: hashedPassword,
+                            passwordHash: "",
+                            firstName: "Trương Văn",
+                            lastName:"Thành",
+                            avatar:"",
+                            email:"thanh9tvt@gmail.com",
+                            mobile:"0987570855",
+                            address:"Hà Nội",
+                            sex:true,
+                            birthday:09/10/1993,
+                            point:null,
+                            token:null,
+                            createDate:07/12/2016,
+                            createBy:"admin",
+                            updateDate:null,
+                            updateBy:null,
+                            isDeleted:false,
+                            isActive:true,
+                            lastLoginDate:null,
+                            lastChangePassword:null,
+                            roleID:superAdmimRole
                         };
-                        var u = new User(adminUserRecord);
+                        var u = new sys_user(adminUserRecord);
                         u.save(function (err) {
                             if (err) {
                                 console.log("super admin user save error: " + err);
@@ -194,7 +329,7 @@ initializeDefaultUsers = function () {
 
 initializeAccessLevels = function () {
     //check if accessLevel or in database
-    AccessLevel.find({}, function (err, results) {
+    access_level.find({}, function (err, results) {
         if (err) {
             console.log("accessLevels Error:" + err);
         } else {
@@ -206,12 +341,12 @@ initializeAccessLevels = function () {
                 var userAccessLevelRecord = {
                     name: manager.ACCESS_LEVEL_USER
                 };
-                var acc = new AccessLevel(publicAccessLevelRecord);
+                var acc = new access_level(publicAccessLevelRecord);
                 acc.save(function (err) {
                     if (err) {
                         console.log("public accessLevels save error: " + err);
                     } else {
-                        acc = new AccessLevel(userAccessLevelRecord);
+                        acc = new access_level(userAccessLevelRecord);
                         acc.save(function (err) {
                             if (err) {
                                 console.log("user accessLevels save error: " + err);
@@ -229,10 +364,10 @@ initializeAccessLevels = function () {
         }
     });
 };
-
+// Khai báo ngôn ngữ
 initializeLanguage = function () {
     //check if english language is in database
-    Language.find({}, function (err, results) {
+    language.find({}, function (err, results) {
         if (err) {
             console.log("language Error:" + err);
         } else {
@@ -243,20 +378,20 @@ initializeLanguage = function () {
                     defaultLanguage: true,
                     code: "en-us"
                 };
-                var spanishLanguageRecord = {
-                    name: "Spanish Puerto Rico",
+                var vietnamLanguageRecord = {
+                    name: "Vietnam",
                     defaultLanguage: false,
-                    code: "es-pr"
+                    code: "vi"
                 };
-                var lan = new Language(englishLanguageRecord);
+                var lan = new language(englishLanguageRecord);
                 lan.save(function (err) {
                     if (err) {
                         console.log("english language save error: " + err);
                     } else {
-                        lan = new Language(spanishLanguageRecord);
+                        lan = new language(vietnamLanguageRecord);
                         lan.save(function (err) {
                             if (err) {
-                                console.log("spanish language save error: " + err);
+                                console.log("vietnam language save error: " + err);
                             } else {
                                 //initial template
                                 initializeTemplate();
@@ -271,11 +406,10 @@ initializeLanguage = function () {
         }
     });
 };
-
-
+// Khỏi tạo template
 initializeTemplate = function () {
     //check if in database
-    Template.find({}, function (err, results) {
+    template.find({}, function (err, results) {
         if (err) {
             console.log("template Error:" + err);
         } else {
@@ -286,7 +420,7 @@ initializeTemplate = function () {
                     defaultTemplate: true,
                     angularTemplate: false
                 };
-                var tmp = new Template(templateRecord);
+                var tmp = new template(templateRecord);
                 tmp.save(function (err) {
                     if (err) {
                         console.log("template save error: " + err);
@@ -320,11 +454,10 @@ initializeTemplate = function () {
         }
     });
 };
-
-
+//Khai nguyên tắc
 initializeRulesDeclaration = function () {
     //check if in database
-    RuleDeclaration.find({}, function (err, results) {
+    rule_declaration.find({}, function (err, results) {
         if (err) {
             console.log("rules Error:" + err);
         } else {
@@ -334,8 +467,7 @@ initializeRulesDeclaration = function () {
                     name: manager.REQUIRE_PUBLISH_APPROVAL_RULE_NAME,
                     ruleKey: manager.REQUIRE_PUBLISH_APPROVAL_RULE_KEY
                 };
-
-                var rule = new RuleDeclaration(ruleDeclarationRecord);
+                var rule = new rule_declaration(ruleDeclarationRecord);
                 console.log("rules obj:" + JSON.stringify(ruleDeclarationRecord));
                 rule.save(function (err) {
                     if (err) {
@@ -352,12 +484,10 @@ initializeRulesDeclaration = function () {
         }
     });
 };
-
-
-
+//Mail Server
 initializeMailServer = function () {
     //check if in database
-    MailServer.find({}, function (err, results) {
+    mail_server.find({}, function (err, results) {
         if (err) {
             console.log("mail server Error:" + err);
         } else {
@@ -371,28 +501,29 @@ initializeMailServer = function () {
                     authMethod: null,
                     tls: null
                 };
-
-                var mserver = new MailServer(mserv);
+                var mserver = new mail_server(mserv);
                 console.log("mail server:" + JSON.stringify(mserv));
                 mserver.save(function (err) {
                     if (err) {
                         console.log("mail server save error: " + err);
                     } else {
+                        // check Section
                         initialSections();
                     }
                 });
             } else {
+                 // check Section
                 initialSections();
             }
         }
     });
 };
-
+// check Section
 initialSections = function () {
     //check if is in database
-    Language.findOne({code: "en-us"}, function (lanErr, lan) {
+    language.findOne({code: "en-us"}, function (lanErr, lan) {
         if (!lanErr && lan !== undefined && lan !== null) {
-            Section.find({}, function (err, results) {
+            section.find({}, function (err, results) {
                 if (err) {
                     console.log("section Error:" + err);
                 } else {
@@ -401,34 +532,33 @@ initialSections = function () {
 
                         var secVal = {
                             name: null,
-                            language: null
+                            languageID: null
                         };
                         secVal.name = "About";
                         secVal.language = lan._id;
 
-                        var sec = new Section(secVal);
+                        var sec = new section(secVal);
                         console.log("section:" + JSON.stringify(secVal));
                         sec.save();
 
-
                         secVal.name = "Contacts";
-                        sec = new Section(secVal);
+                        sec = new section(secVal);
                         console.log("section:" + JSON.stringify(secVal));
                         sec.save();
 
                         secVal.name = "MainPage";
-                        sec = new Section(secVal);
+                        sec = new section(secVal);
                         console.log("section:" + JSON.stringify(secVal));
                         sec.save();
 
                         secVal.name = "News";
-                        sec = new Section(secVal);
+                        sec = new section(secVal);
                         console.log("section:" + JSON.stringify(secVal));
                         sec.save();
-
+                        //Khai báo Category
                         initialCategories();
-
                     } else {
+                        //Khai báo Category
                         initialCategories();
                     }
                 }
@@ -436,11 +566,10 @@ initialSections = function () {
         }
     });
 };
-
-
+//Khai báo Category
 initialCategories = function () {
     //check if is in database
-    Language.findOne({code: "en-us"}, function (lanErr, lan) {
+    language.findOne({code: "en-us"}, function (lanErr, lan) {
         if (!lanErr && lan !== undefined && lan !== null) {
             Category.find({}, function (err, results) {
                 if (err) {
@@ -448,28 +577,25 @@ initialCategories = function () {
                 } else {
                     console.log("catagory:" + JSON.stringify(results));
                     if (results.length === 0) {
-
                         var catVal = {
                             name: null,
-                            language: null
+                            languageID: null
                         };
                         catVal.name = "News";
                         catVal.language = lan._id;
 
-                        var cat = new Category(catVal);
+                        var cat = new category(catVal);
                         console.log("category:" + JSON.stringify(catVal));
                         cat.save();
-
 
                         catVal.name = "NewsFlash";
-                        cat = new Category(catVal);
+                        cat = new category(catVal);
                         console.log("category:" + JSON.stringify(catVal));
                         cat.save();
-
-
+                        //int Location
                         initialLocations();
-
                     } else {
+                        //int Location
                         initialLocations();
                     }
                 }
@@ -477,13 +603,12 @@ initialCategories = function () {
         }
     });
 };
-
-
+//int Location
 initialLocations = function () {
     //check if is in database
     // Location.findOne({code: "en-us"}, function (lanErr, lan) {
     //if (!lanErr && lan !== undefined && lan !== null) {
-    Location.find({}, function (err, results) {
+    location.find({}, function (err, results) {
         if (err) {
             console.log("Location Error:" + err);
         } else {
@@ -495,41 +620,38 @@ initialLocations = function () {
                 };
                 locVal.name = "Center";
 
-                var loc = new Location(locVal);
+                var loc = new location(locVal);
                 console.log("Location:" + JSON.stringify(locVal));
                 loc.save();
 
-
                 locVal.name = "Right";
-                loc = new Location(locVal);
+                loc = new location(locVal);
                 console.log("Location:" + JSON.stringify(locVal));
                 loc.save();
 
                 locVal.name = "Left";
-                loc = new Location(locVal);
+                loc = new location(locVal);
                 console.log("Location:" + JSON.stringify(locVal));
                 loc.save();
 
                 locVal.name = "TopMenu";
                 locVal.menu = true;
-                loc = new Location(locVal);
+                loc = new location(locVal);
                 console.log("Location:" + JSON.stringify(locVal));
                 loc.save();
-
+                // init template Engine
                 initializeTemplateEngine();
-
             } else {
+                // init template Engine
                 initializeTemplateEngine();
             }
         }
     });
-    //}
-    //});
 };
-
+// init template Engine
 initializeTemplateEngine = function () {
     //check if in database
-    TemplateEngine.find({}, function (err, results) {
+    template_engine.find({}, function (err, results) {
         if (err) {
             console.log("template Engine Error:" + err);
         } else {
@@ -541,7 +663,7 @@ initializeTemplateEngine = function () {
                     engine: "ejs",
                     ext: "ejs"
                 };
-                var tmpEng = new TemplateEngine(templateEngineRecord);
+                var tmpEng = new template_engine(templateEngineRecord);
                 tmpEng.save(function (err) {
                     if (err) {
                         console.log("template Engine save error: " + err);
@@ -552,7 +674,7 @@ initializeTemplateEngine = function () {
                             engine: "hbs",
                             ext: "hbs"
                         };
-                        var tmpEng2 = new TemplateEngine(template2Record);
+                        var tmpEng2 = new template_engine(template2Record);
                         tmpEng2.save(function (err) {
                             if (err) {
                                 console.log("template Engine 2 save error: " + err);
@@ -563,7 +685,7 @@ initializeTemplateEngine = function () {
                                     engine: "jade",
                                     ext: "jade"
                                 };
-                                var tmpEng3 = new TemplateEngine(template3Record);
+                                var tmpEng3 = new template_engine(template3Record);
                                 tmpEng3.save(function (err) {
                                     if (err) {
                                         console.log("template Engine 3 save error: " + err);

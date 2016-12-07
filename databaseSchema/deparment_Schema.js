@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
 var departmentSchema = new mongoose.Schema({
     name: {type: String, required: true, trim: true},
-    description:{type:String},
-    orderNo: {type:String},
+    description:{type:String,default:null},
+    orderNo: {type:Number,default:null},
     parentID:{type: mongoose.Schema.ObjectId, required: true, ref: "deparment"},
     createDate:{type:Date,default:null},
     createBy:{type:String,default:null},
